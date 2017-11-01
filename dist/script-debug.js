@@ -70,23 +70,74 @@
 "use strict";
 
 
-//injecting sass directly into js not html
+//injecting sass directly into js not html with:
 // require('../styles/style.sass')
 
-var component = __webpack_require__(1);
-document.write('Well hello, ' + component);
+// const component = require('./component')
+// document.write( `Well hello, ${component}` )
 
 // console.log('this is the app.js')
 
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+//download data in the console as soon as page loads
+/*
+let myreq = new XMLHttpRequest()
+myreq.open('GET', 'https://learnwebcode.github.io/json-example/animals-1.json')
+myreq.onload = function() {
+  let mydata = JSON.parse(myreq.responseText)
+  // console.log(myreq.responseText)
+  console.log(mydata[0])
+}
+myreq.send()
+*/
 
-"use strict";
+var pageCounter = 1;
+var animalInfo = document.getElementById('animal-info');
+var btn = document.getElementById('btn');
 
+btn.addEventListener("click", function () {
+  var myreq = new XMLHttpRequest();
+  myreq.open('GET', 'https://learnwebcode.github.io/json-example/animals-' + pageCounter + '.json');
+  myreq.onload = function () {
+    // console.log(myreq.responseText)
+    var mydata = JSON.parse(myreq.responseText);
+    console.log(mydata);
+    renderHTML(mydata);
+  };
+  myreq.send();
+  pageCounter++;
+  if (pageCounter > 3) {
+    btn.classList.add('hide-me');
+  }
+});
 
-module.exports = 'it works';
-// console.log('this is the component.js')
+function renderHTML(data) {
+  var htmlString = "";
+
+  for (var i = 0; i < data.length; i++) {
+    htmlString += "<p>" + data[i].name + "is a " + data[i].species + 'that likes to eat ';
+    for (var ii = 0; ii < data[i].foods.likes.length; ii++) {
+      if (ii == 0) {
+        htmlString += data[i].foods.likes[ii];
+      } else {
+        htmlString += " and " + data[i].foods.likes[ii];
+      }
+    }
+
+    htmlString += ' and dislikes ';
+
+    for (var _ii = 0; _ii < data[i].foods.dislikes.length; _ii++) {
+      if (_ii == 0) {
+        htmlString += data[i].foods.dislikes[_ii];
+      } else {
+        htmlString += " and " + data[i].foods.dislikes[_ii];
+      }
+    }
+
+    htmlString += '.</p>';
+  }
+
+  animalInfo.insertAdjacentHTML('beforeend', htmlString);
+}
 
 /***/ })
 /******/ ]);
